@@ -1,6 +1,7 @@
 #pragma once
 #include "raylib.h"
-#include <bits/stdc++.h>
+#include <iostream>
+#include <string>
 using namespace std;
 
 
@@ -34,6 +35,7 @@ void setFont() {
     SetTextureFilter(myFont.texture, TEXTURE_FILTER_POINT);
 }
 
+
 void deleteKey() {
     int key = GetCharPressed();
     if (key > 0 && key < 256) inputText += (char)key;
@@ -41,19 +43,19 @@ void deleteKey() {
 }
 
 
-const void DrawScrollableText(Font font, const string &text, Rectangle box, int fontSize, Color color) {
+void DrawScrollableText(Font font, const string &text, Rectangle box, int fontSize, Color color) {
     Vector2 textSize = MeasureTextEx(font, text.c_str(), fontSize, 2);
     float offset = 0;
+    if (textSize.x > box.width - 10) offset = textSize.x - (box.width - 10);
 
-    if (textSize.x > box.width - 10) {
-        offset = textSize.x - (box.width - 10);
-    }
+    Vector2 pos = {box.x + 5 - offset, box.y + (box.height - fontSize)/2.0f};
 
-    Vector2 pos = {box.x + 5 - offset, box.y + (box.height - fontSize) / 2.0f};
+    BeginScissorMode((int)box.x, (int)box.y, (int)box.width, (int)box.height);
     DrawTextEx(font, text.c_str(), pos, fontSize, 2, color);
+    EndScissorMode();
 }
 
-const void DrawButtons(string &inputText) {
+void DrawButtons(string &inputText) {
     Vector2 mousePos = GetMousePosition();
 
     for (int row = 0; row < 5; row++) {
@@ -84,8 +86,9 @@ const void DrawButtons(string &inputText) {
                 if (label == "AC") inputText = "";
                 else if (label == "DEL" && !inputText.empty()) inputText.pop_back();
                 else if (label == "Space") inputText += " ";
-                else if (label == "=") {
-                    // stack.h
+                else if (label == "=" || IsKeyPressed(KEY_ENTER)) {
+                    // stack.h 
+                     DrawTextEx(myFont, "RPN Calculator", {170, 5}, 40, 2, WHITE);
                 } else inputText += label;
             }
         }

@@ -8,6 +8,7 @@ int main() {
 
     while (!WindowShouldClose()) {
         BeginDrawing();
+        
         ClearBackground(BLACK);
         DrawTextEx(myFont, "RPN Calculator", {130, 5}, 40, 2, WHITE);
         deleteKey();

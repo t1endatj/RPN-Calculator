@@ -14,8 +14,8 @@ int main() {
         keyBoardEvent();
         DrawRectangleRec(display, LIGHTGRAY);
         DrawRectangleLinesEx(display, 2, DARKGRAY);
-        DrawScrollableText(displayFont, inputText, display, 30, BLACK);
-        DrawButtons(inputText);
+        drawScrollableText(displayFont, inputText, display, 30, BLACK);
+        drawButtons(inputText);
 
         EndDrawing();
     }

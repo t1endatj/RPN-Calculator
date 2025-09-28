@@ -40,7 +40,7 @@ void setFont() {
 }
 
 // Xoá dữ liệu đầu vào 
-void deleteInput(string &inputText){
+void deleteToken(string &inputText){
     if (inputText.size() >= 3 && inputText.substr(inputText.size() - 3) == "Abs") inputText.erase(inputText.size() - 3);
     else if (inputText.size() >= 3 && inputText.substr(inputText.size() - 3) == "Inv") inputText.erase(inputText.size() - 3);
     else if (inputText.size() >= 4 && inputText.substr(inputText.size() - 4) == "Sqrt") inputText.erase(inputText.size() - 4);
@@ -53,13 +53,13 @@ void deleteInput(string &inputText){
 void keyBoardEvent() {
     int key = GetCharPressed();
     if (key > 0 && key < 256) inputText += (char)key;
-    if (IsKeyPressed(KEY_BACKSPACE) && !inputText.empty()) deleteInput(inputText);
+    if (IsKeyPressed(KEY_BACKSPACE) && !inputText.empty()) deleteToken(inputText);
 }
 
 
 
 // Hàm di chuyển text khi vượt ngoài ô hiển thị
-void DrawScrollableText(Font font, const string &text, Rectangle box, int fontSize, Color color) {
+void drawScrollableText(Font font, const string &text, Rectangle box, int fontSize, Color color) {
     Vector2 textSize = MeasureTextEx(font, text.c_str(), fontSize, 2);
     float offset = 0;
     if (textSize.x > box.width - 10) offset = textSize.x - (box.width - 10);
@@ -72,7 +72,7 @@ void DrawScrollableText(Font font, const string &text, Rectangle box, int fontSi
 }
 
 // Hàm vẽ các nút máy tính
-void DrawButtons(string &inputText) {
+void drawButtons(string &inputText) {
     Vector2 mousePos = GetMousePosition();
 
     for (int row = 0; row < 5; row++) {
@@ -102,7 +102,7 @@ void DrawButtons(string &inputText) {
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
                 CheckCollisionPointRec(mousePos, buttonRect)) {
                 if (label == "AC") inputText = "";
-                else if(label == "DEL" && !inputText.empty()) deleteInput(inputText);
+                else if(label == "DEL" && !inputText.empty()) deleteToken(inputText);
                 else if(label == "Space") inputText += " ";
                 else if(label == "=" || IsKeyPressed(KEY_ENTER)){
                     // stack.h

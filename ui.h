@@ -5,6 +5,8 @@
 using namespace std;
 
 
+// =========== Variables ===========
+
 Font myFont;
 Font labelFont;
 Font displayFont;
@@ -28,6 +30,8 @@ const char* labels[5][5] = {
 };
 
 
+
+// =========== UI/UX Functions ===========
 void setFont() {
     myFont = LoadFontEx("./Poppins-Medium.otf", 40, 0, 0);
     labelFont = LoadFontEx("./Poppins-Medium.otf", 25, 0, 0);
@@ -35,14 +39,26 @@ void setFont() {
     SetTextureFilter(myFont.texture, TEXTURE_FILTER_POINT);
 }
 
+// Xoá dữ liệu đầu vào 
+void deleteInput(string &inputText){
+    if (inputText.size() >= 3 && inputText.substr(inputText.size() - 3) == "Abs") inputText.erase(inputText.size() - 3);
+    else if (inputText.size() >= 3 && inputText.substr(inputText.size() - 3) == "Inv") inputText.erase(inputText.size() - 3);
+    else if (inputText.size() >= 4 && inputText.substr(inputText.size() - 4) == "Sqrt") inputText.erase(inputText.size() - 4);
+    else if (inputText.size() >= 3 && inputText.substr(inputText.size() - 3) == "Pow") inputText.erase(inputText.size() - 3);
+    else if (inputText.size() >= 3 && inputText.substr(inputText.size() - 3) == "Neg") inputText.erase(inputText.size() - 3);
+    else inputText.pop_back(); 
+}
 
-void deleteKey() {
+// Tương tác bằng bàn phím
+void keyBoardEvent() {
     int key = GetCharPressed();
     if (key > 0 && key < 256) inputText += (char)key;
-    if (IsKeyPressed(KEY_BACKSPACE) && !inputText.empty()) inputText.pop_back();
+    if (IsKeyPressed(KEY_BACKSPACE) && !inputText.empty()) deleteInput(inputText);
 }
 
 
+
+// Hàm di chuyển text khi vượt ngoài ô hiển thị
 void DrawScrollableText(Font font, const string &text, Rectangle box, int fontSize, Color color) {
     Vector2 textSize = MeasureTextEx(font, text.c_str(), fontSize, 2);
     float offset = 0;
@@ -55,6 +71,7 @@ void DrawScrollableText(Font font, const string &text, Rectangle box, int fontSi
     EndScissorMode();
 }
 
+// Hàm vẽ các nút máy tính
 void DrawButtons(string &inputText) {
     Vector2 mousePos = GetMousePosition();
 
@@ -80,16 +97,17 @@ void DrawButtons(string &inputText) {
                 {0, 0, 0, 255});
 
             Rectangle buttonRect = {(float)x, (float)y, (float)buttonWidth, (float)buttonHeight};
-
+            
+            // Tương tác bằng sự kiện click chuột
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
                 CheckCollisionPointRec(mousePos, buttonRect)) {
                 if (label == "AC") inputText = "";
-                else if (label == "DEL" && !inputText.empty()) inputText.pop_back();
-                else if (label == "Space") inputText += " ";
-                else if (label == "=" || IsKeyPressed(KEY_ENTER)) {
-                    // stack.h 
-                     DrawTextEx(myFont, "RPN Calculator", {170, 5}, 40, 2, WHITE);
-                } else inputText += label;
+                else if(label == "DEL" && !inputText.empty()) deleteInput(inputText);
+                else if(label == "Space") inputText += " ";
+                else if(label == "=" || IsKeyPressed(KEY_ENTER)){
+                    // stack.h
+                }  
+                else if(label != "DEL") inputText += label;
             }
         }
     }

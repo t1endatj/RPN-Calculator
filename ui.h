@@ -12,9 +12,10 @@ Font labelFont;
 Font displayFont;
 
 string inputText = "";
+string result = "";
 
 Rectangle display = {25, 50, 450, 50};
-
+Rectangle displayRes = {25, 120, 450, 50};
 const int buttonWidth = 80;
 const int buttonHeight = 60;
 const int startX = 40;
@@ -71,6 +72,10 @@ void drawScrollableText(Font font, const string &text, Rectangle box, int fontSi
     EndScissorMode();
 }
 
+void displayResult(string inputText) {
+    drawScrollableText(displayFont, inputText, displayRes, 30, BLACK);
+}
+
 // Hàm vẽ các nút máy tính
 void drawButtons(string &inputText) {
     Vector2 mousePos = GetMousePosition();
@@ -105,7 +110,7 @@ void drawButtons(string &inputText) {
                 else if(label == "DEL" && !inputText.empty()) deleteToken(inputText);
                 else if(label == "Space") inputText += " ";
                 else if(label == "=" || IsKeyPressed(KEY_ENTER)){
-                    // stack.h
+                    result = inputText;
                 }  
                 else if(label != "DEL") inputText += label;
             }

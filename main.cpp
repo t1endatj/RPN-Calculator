@@ -16,7 +16,9 @@ int main() {
         DrawRectangleRec(displayRes, LIGHTGRAY);
         DrawRectangleLinesEx(display, 2, DARKGRAY);
         DrawRectangleLinesEx(displayRes, 2, DARKGRAY);
+        
         drawScrollableText(displayFont, inputText, display, 30, BLACK);
+        drawHistory();
         drawButtons(inputText);
 
         displayResult(result);

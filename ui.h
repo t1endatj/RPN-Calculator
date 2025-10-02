@@ -1,7 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include "rpn.h"
-#include "algorithms_simple.h"
+#include "algorithms.h"
 #include <iostream>
 #include <string>
 using namespace std;
@@ -15,32 +15,37 @@ Font displayFont;
 Font miniFont;
 Font hFont;
 
+
 string inputText = "";
 string result = "";
-
-// Hệ thống lịch sử
-const int MAX_HISTORY = 10;
-HistoryEntry history[MAX_HISTORY];
-HistoryEntry filteredHistory[MAX_HISTORY];
-int historyCount = 0;
-int filteredCount = 0;
 string searchText = "";
-bool isSearching = false;
-
-Rectangle display = {25, 10, 450, 50};
-Rectangle displayRes = {25, 70, 450, 50};
-Rectangle displayH = {25, 160, 450, 257};
-Rectangle searchBox = {25, 130, 200, 20};
-Rectangle sortButton = {235, 130, 60, 20};
-Rectangle clearButton = {305, 130, 50, 20};
-Rectangle filterButton = {365, 130, 50, 20};
-
+string ans = "";
 
 const int buttonWidth = 80;
 const int buttonHeight = 60;
 const int startX = 40;
 const int startY = 400; 
 const int gap = 12;
+const int maxHistory = 10;
+int historyCount = 0;
+int filteredCount = 0;
+
+bool isSearching = false;
+bool searchMode = false;
+
+
+Rectangle display = {25, 10, 450, 50};
+Rectangle displayRes = {25, 70, 450, 50};
+Rectangle displayH = {25, 160, 450, 257};
+Rectangle searchBox = {25, 130, 260, 20};
+Rectangle sortButton = {295, 130, 60, 20};
+Rectangle clearButton = {365, 130, 50, 20};
+Rectangle filterButton = {425, 130, 50, 20};
+
+History history[maxHistory];
+History filteredHistory[maxHistory];
+
+
 
 const char* labels[5][5] = {
     {"Pow", "Sqrt", "Inv", "Neg", "Abs"},
@@ -64,15 +69,14 @@ void setFont() {
 
 // Thêm phép tính vào lịch sử
 void addToHistory(const string& expression, double resultValue) {
-    // Dịch chuyển lịch sử cũ xuống
-    for (int i = MAX_HISTORY - 1; i > 0; i--) {
+    for (int i = maxHistory - 1; i > 0; i--) {
         history[i] = history[i - 1];
     }
     
     // Thêm phép tính mới vào đầu
-    history[0] = HistoryEntry(expression, resultValue);
+    history[0] = History(expression, resultValue);
     
-    if (historyCount < MAX_HISTORY) {
+    if (historyCount < maxHistory) {
         historyCount++;
     }
 }
@@ -86,15 +90,15 @@ void drawHistory() {
     
     // Nút Sort
     DrawRectangleRec(sortButton, LIGHTGRAY);
-    DrawTextEx(miniFont, "Sort", {253, 133}, 14, 1, BLACK);
+    DrawTextEx(miniFont, "Sort", {313, 133}, 14, 1, BLACK);
     
     // Nút Clear
     DrawRectangleRec(clearButton, LIGHTGRAY);
-    DrawTextEx(miniFont, "Clear", {318, 133}, 14, 1, BLACK);
+    DrawTextEx(miniFont, "Clear", {378, 133}, 14, 1, BLACK);
     
     // Nút Filter
     DrawRectangleRec(filterButton, isSearching ? YELLOW : LIGHTGRAY);
-    DrawTextEx(miniFont, "Filter", {378, 133}, 14, 1, BLACK);
+    DrawTextEx(miniFont, "Filter", {438, 133}, 14, 1, BLACK);
     
     // khung lịch sử
     DrawRectangleRec(displayH, LIGHTGRAY);
@@ -102,7 +106,7 @@ void drawHistory() {
     
     // Hiển thị lịch sử
     Vector2 mousePos = GetMousePosition();
-    HistoryEntry* displayArray = isSearching ? filteredHistory : history;
+    History* displayArray = isSearching ? filteredHistory : history;
     int displayCount = isSearching ? filteredCount : historyCount;
     
     int maxDisplay = 10; 
@@ -114,10 +118,11 @@ void drawHistory() {
         if (displayText.length() > 45) {
             displayText = displayText.substr(0, 42) + "...";
         }
-        
+
+
+        // hiệu ứng hover
         Rectangle lineRect = {30, yPos - 5, 420, 20};
         
-        // Highlight khi hover
         if (CheckCollisionPointRec(mousePos, lineRect)) {
             DrawRectangleRec(lineRect, YELLOW);
         }
@@ -131,18 +136,18 @@ void drawHistory() {
         }
     }
     
-    // Xử lý các nút
+    // Xử lý các nút chức năng
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        // Nút Sort
+        // Sort
         if (CheckCollisionPointRec(mousePos, sortButton)) {
             if (isSearching) {
-                sortHistoryByResult(filteredHistory, filteredCount);
+                sortHistory(filteredHistory, filteredCount);
             } else {
-                sortHistoryByResult(history, historyCount);
+                sortHistory(history, historyCount);
             }
         }
         
-        // Nút Clear
+        // Clear
         if (CheckCollisionPointRec(mousePos, clearButton)) {
             historyCount = 0;
             filteredCount = 0;
@@ -150,7 +155,7 @@ void drawHistory() {
             isSearching = false;
         }
         
-        // Nút Filter
+        // Filter
         if (CheckCollisionPointRec(mousePos, filterButton)) {
             if (!searchText.empty()) {
                 filteredCount = filterHistory(history, historyCount, filteredHistory, searchText);
@@ -159,11 +164,7 @@ void drawHistory() {
                 isSearching = false;
             }
         }
-        
-        // Click vào ô tìm kiếm
-        if (CheckCollisionPointRec(mousePos, searchBox)) {
-            // Bật chế độ nhập tìm kiếm
-        }
+
     }
 }
 
@@ -178,11 +179,25 @@ void deleteToken(string &inputText){
     else inputText.pop_back(); 
 }
 
+// xử lý tính toán
+void Calculator() {
+    try {
+        string res = evalRPN(inputText);
+        result = res;
+        ans = result;
+        try {
+            double numResult = stod(res);
+            addToHistory(inputText, numResult);
+        } catch (const exception&) {
+        }
+    } catch (const exception& e) {
+        result = e.what();
+    }
+}
+
 // Tương tác bằng bàn phím
 void keyBoardEvent() {
-    Vector2 mousePos = GetMousePosition();
-    static bool searchMode = false;
-    
+    Vector2 mousePos = GetMousePosition();  
     // Kiểm tra click vào ô tìm kiếm
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         if (CheckCollisionPointRec(mousePos, searchBox)) {
@@ -196,7 +211,8 @@ void keyBoardEvent() {
     if (key > 0 && key < 256) {
         if (searchMode) {
             searchText += (char)key;
-        } else {
+        }
+        else {
             inputText += (char)key;
         }
     }
@@ -209,10 +225,18 @@ void keyBoardEvent() {
         }
     }
     
-    // ESC để thoát chế độ tìm kiếm
+    // ESC 
     if (IsKeyPressed(KEY_ESCAPE)) {
         searchMode = false;
         isSearching = false;
+    }
+   
+    
+    // Enter
+    if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_KP_ENTER)) {
+        if (!searchMode && !inputText.empty()) {
+            Calculator();
+        }
     }
 }
 
@@ -267,19 +291,17 @@ void drawButtons(string &inputText) {
             // Tương tác bằng sự kiện click chuột
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
                 CheckCollisionPointRec(mousePos, buttonRect)) {
-                if (label == "AC") inputText = "";
+                if (label == "AC"){
+                    inputText = "";
+                    result = "";
+                }
                 else if(label == "DEL" && !inputText.empty()) deleteToken(inputText);
                 else if(label == "Space") inputText += " ";
-                else if(label == "=" || IsKeyPressed(KEY_ENTER)){
-                    try {
-                        double res = evalRPN(inputText);
-                        result = to_string(res);
-                        addToHistory(inputText, res);
-                    } catch (const exception& e) {
-                        result = e.what();
-                    }
-                }  
+                else if(label == "=") Calculator();   
+                else if(label == "Ans") displayResult(ans);
                 else if(label != "DEL") inputText += label;
+                
+
             }
         }
     }

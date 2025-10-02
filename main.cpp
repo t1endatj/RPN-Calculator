@@ -12,6 +12,7 @@ int main() {
         ClearBackground(BLACK);
         DrawTextEx(myFont, "RPN Calculator", {130, 5}, 40, 2, WHITE);
         keyBoardEvent();
+
         DrawRectangleRec(display, LIGHTGRAY);
         DrawRectangleRec(displayRes, LIGHTGRAY);
         DrawRectangleLinesEx(display, 2, DARKGRAY);
@@ -20,7 +21,6 @@ int main() {
         drawScrollableText(displayFont, inputText, display, 30, BLACK);
         drawHistory();
         drawButtons(inputText);
-
         displayResult(result);
 
         EndDrawing();

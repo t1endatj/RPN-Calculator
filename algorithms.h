@@ -2,7 +2,7 @@
 #include <string>
 using namespace std;
 
-// Struct lưu trữ một phép tính
+// Struct to store a calculation
 struct History {
     string expression;
     double result;
@@ -19,79 +19,70 @@ struct History {
 };
 
 
-// Quick sort 
-void quickSortNoP(History nums[], int l, int r) {
-    double pivot = nums[(l + r) / 2].result; 
-    int i = l;
-    int j = r;
-
-    while (i <= j) {
-        while (nums[i].result < pivot) i++;
-        while (nums[j].result > pivot) j--;
-        if (i <= j) {
-            swap(nums[i], nums[j]);  
-            i++;
+// Insertion sort
+void insertionSort(History nums[], int n) {
+    for (int i = 1; i < n; i++) {
+        History key = nums[i]; 
+        int j = i - 1;
+        while (j >= 0 && nums[j].result > key.result) {
+            nums[j + 1] = nums[j];
             j--;
         }
+        nums[j + 1] = key;
     }
-
-    if (l < j) quickSortNoP(nums, l, j);
-    if (i < r) quickSortNoP(nums, i, r);
 }
 
 void sortHistory(History history[], int count) {
-    quickSortNoP(history, 0, count - 1);
+    if (history == nullptr || count <= 0) return;
+    insertionSort(history, count);
 }
 
-// Thuật toán tìm kiếm chuỗi con (String Search)
-#include <string>
-using namespace std;
 
-bool containsSubstring(const string& text, const string& pattern) {
+
+// Boyar moore string search
+bool boyarMooreSearch(const string& text, const string& pattern) {
     int n = text.size();
     int m = pattern.size();
-    if (m == 0) return true;
-    if (n < m) return false;
+    if (m == 0) return true;  
+    if (n < m) return false;  
 
-    // Bảng "bad character" mặc định cho ASCII (256 ký tự)
-    int badChar[256];
-    for (int i = 0; i < 256; i++) badChar[i] = -1;
 
-    for (int i = 0; i < m; i++) {
-        badChar[(unsigned char)pattern[i]] = i; 
+    int L[256];
+    for (int i = 0; i < 256; i++) L[i] = -1;
+    for (int j = 0; j < m; j++) {
+        L[(unsigned char)pattern[j]] = j;
     }
 
-    int shift = 0; // vị trí bắt đầu trong text
-    while (shift <= n - m) {
-        int j = m - 1;
+    int i = m - 1;
+    int j = m - 1; 
 
-        // So sánh pattern từ phải sang trái
-        while (j >= 0 && pattern[j] == text[shift + j]) {
-            j--;
-        }
-
-        // Nếu j < 0 => khớp hoàn toàn
-        if (j < 0) {
-            return true;
+    while (i < n) {
+        if (text[i] == pattern[j]) {
+            if (j == 0) {
+                return true; 
+            } else {
+                i--;
+                j--;
+            }
         } else {
-            // Dùng bad character rule để tính bước nhảy
-            int skip = j - badChar[(unsigned char)text[shift + j]];
-            if (skip < 1) skip = 1;
-            shift += skip;
+            int l = L[(unsigned char)text[i]];
+            int skip = j < (1 + l) ? j : (1 + l); 
+            i = i + m - skip;
+            j = m - 1;
         }
     }
     return false;
 }
 
 
-// Lọc lịch sử theo chuỗi tìm kiếm
+// Filter history by search string
 int filterHistory(const History source[], int sourceCount, History filtered[], const string& searchText) {
         int filteredCount = 0;    
         for (int i = 0; i < sourceCount; i++) {
-            // Tìm kiếm trong biểu thức hoặc kết quả 
+            // Search in expression or result 
             string resultStr = to_string(source[i].result);
-            if (containsSubstring(source[i].expression, searchText) || 
-                containsSubstring(resultStr, searchText)) {
+            if (boyarMooreSearch(source[i].expression, searchText) || 
+                boyarMooreSearch(resultStr, searchText)) {
                 filtered[filteredCount] = source[i];
                 filteredCount++;
             }

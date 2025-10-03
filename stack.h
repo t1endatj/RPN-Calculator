@@ -13,14 +13,10 @@ struct Stack {
     }
 
     string pop() {
-        if (top < 0) throw underflow_error("Stack Overflow");
+        if (top < 0) throw underflow_error("Stack Underflow");
         return values[top--];
     }
 
-    string peek() const {
-        if (top < 0) throw underflow_error("Stack Overflow");
-        return values[top];
-    }
 
     bool empty() const { return top < 0; }
     int size() const { return top + 1; }

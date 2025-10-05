@@ -34,7 +34,7 @@ string evalRPN(const string& rpn) {
         if (isDigit(rpn[i]) || (rpn[i] == '-' && i+1 < rpn.size() && isDigit(rpn[i+1]))) {
             token.clear();
             if (rpn[i] == '-') {
-                token.push_back(rpn[i++]); // Add the negative sign
+                token.push_back(rpn[i++]); 
             }
             while (i<rpn.size() && isDigit(rpn[i])) token.push_back(rpn[i++]);
             st.push(token);

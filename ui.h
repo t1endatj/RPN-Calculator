@@ -121,7 +121,9 @@ void Calculator() {
         try {
             double numResult = stod(res);
             addToHistory(inputText, numResult);
-        } catch (const exception&) {}
+        } catch (const exception& e) {
+            result = string("Error: ") + e.what();
+        }
     } catch (const exception& e) {
         result = e.what();
     }
@@ -196,7 +198,7 @@ void drawScrollableText(Font font, const string &text, Rectangle box, int fontSi
     EndScissorMode();
 }
 
-
+// HIỆN KẾT QUẢ
 void displayResult(string inputText) {
     drawScrollableText(displayFont, inputText, displayRes, 30, BLACK);
 }
@@ -239,7 +241,7 @@ void drawHistory() {
         // HIỆU ỨNG KHI HOVER VÀO PHÉP TOÁN
         Rectangle lineRect = {30, yPos - 5, 420, 20};
         
-        // HÀM CheckCollisionPointRec() dùng kiểm tra chuột có trong khối không
+        // HÀM CHECKCOLLISIONPOINTREC() DÙNG KIỂM TRA CHUỘT CÓ TRONG KHỐI KHÔNG
 
         if (CheckCollisionPointRec(mousePos, lineRect)) {
             DrawRectangleRec(lineRect, YELLOW);

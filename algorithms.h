@@ -78,9 +78,8 @@ bool boyarMooreSearch(const string& text, const string& pattern) {
 // Filter history by search string
 int filterHistory(const History source[], int sourceCount, History filtered[], const string& searchText) {
         int filteredCount = 0;    
-        for (int i = 0; i < sourceCount; i++) {
-            // Search in expression or result 
-            string resultStr = to_string(source[i].result);
+        for (int i = 0; i < sourceCount && filteredCount < 30; i++) { 
+            string resultStr = formatNum(source[i].result);
             if (boyarMooreSearch(source[i].expression, searchText) || 
                 boyarMooreSearch(resultStr, searchText)) {
                 filtered[filteredCount] = source[i];

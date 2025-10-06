@@ -16,7 +16,7 @@ const int buttonHeight = 60;
 const int startX = 40;
 const int startY = 400; 
 const int gap = 12;
-const int maxHistory = 10;
+const int maxHistory = 30;
 
 const char* labels[5][5] = {
     {"Pow", "Sqrt", "Inv", "Neg", "Abs"},
@@ -46,6 +46,7 @@ string ans = "";
 
 // History Management
 int historyCount = 0;
+int head = 0;
 int filteredCount = 0;
 bool isSearching = false;
 bool searchMode = false;
@@ -77,26 +78,17 @@ void setFont() {
     SetTextureFilter(myFont.texture, TEXTURE_FILTER_POINT);
 }
 
-/**
- * Add calculation to history
- * @param expression - The mathematical expression
- * @param resultValue - The calculated result
- */
+
+
 void addToHistory(const string& expression, double resultValue) {
-    for (int i = maxHistory - 1; i > 0; i--) {
-        history[i] = history[i - 1];
-    }
-    history[0] = History(expression, resultValue);
+    history[head] = History(expression, resultValue);
+    head = (head + 1) % maxHistory;
     if (historyCount < maxHistory) {
         historyCount++;
     }
 }
 
-/**
- * Delete last token from input string
- * Handles both single characters and function names
- * @param inputText - Reference to input string to modify
- */
+
 void deleteToken(string &inputText) {
     if (inputText.size() >= 3 && inputText.substr(inputText.size() - 3) == "Abs") 
         inputText.erase(inputText.size() - 3);
@@ -118,9 +110,7 @@ void deleteToken(string &inputText) {
 // ======================= CALCULATION ENGINE ================================
 // ============================================================================
 
-/**
- * Main calculation function
- */
+
 void Calculator() {
     try {
         string res = evalRPN(inputText);
@@ -142,10 +132,6 @@ void Calculator() {
 // ======================= INPUT HANDLING ====================================
 // ============================================================================
 
-/**
- * Handle keyboard input events
- * Manages both calculator input and search functionality
- */
 void keyBoardEvent() {
     Vector2 mousePos = GetMousePosition();  
     
@@ -195,10 +181,7 @@ void keyBoardEvent() {
 // ========================== UI RENDERING ===================================
 // ============================================================================
 
-/**
- * Draw scrollable text within a rectangle
- * Automatically scrolls text if it exceeds the box width
- */
+
 void drawScrollableText(Font font, const string &text, Rectangle box, int fontSize, Color color) {
     Vector2 textSize = MeasureTextEx(font, text.c_str(), fontSize, 2);
     float offset = 0;
@@ -214,17 +197,13 @@ void drawScrollableText(Font font, const string &text, Rectangle box, int fontSi
     EndScissorMode();
 }
 
-/**
- * Display calculation result
- * @param inputText - The text to display
- */
+
 void displayResult(string inputText) {
     drawScrollableText(displayFont, inputText, displayRes, 30, BLACK);
 }
 
 /**
- * Draw history panel with search and control buttons
- * Handles history display, sorting, filtering, and clearing
+ * Draw history with sort, filter, and clear
  */
 void drawHistory() {
     // Draw search box
@@ -244,22 +223,23 @@ void drawHistory() {
     // Draw history background
     DrawRectangleRec(displayH, LIGHTGRAY);
     
-    // Display history entries
+    // Display history
     Vector2 mousePos = GetMousePosition();
     History* displayArray = isSearching ? filteredHistory : history;
     int displayCount = isSearching ? filteredCount : historyCount;
     
-    int maxDisplay = 10; 
+    
+    int maxDisplay = isSearching ? min(displayCount, 15) : min(displayCount, 10); 
     for (int i = 0; i < displayCount && i < maxDisplay; i++) {
         float yPos = 172 + i * 25;
-        string displayText = displayArray[i].expression + " = " + to_string(displayArray[i].result);
+        string displayText = displayArray[i].expression + " = " + formatNum(displayArray[i].result);
         
-        // Truncate if too long
+  
         if (displayText.length() > 45) {
             displayText = displayText.substr(0, 42) + "...";
         }
 
-        // Hover effect
+    
         Rectangle lineRect = {30, yPos - 5, 420, 20};
         
         if (CheckCollisionPointRec(mousePos, lineRect)) {
@@ -268,23 +248,21 @@ void drawHistory() {
         
         DrawTextEx(hFont, displayText.c_str(), {35, yPos}, 12, 1, BLACK);
         
-        // Click to copy expression to input
+ 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && 
             CheckCollisionPointRec(mousePos, lineRect)) {
             inputText = displayArray[i].expression;
         }
     }
     
-    // Handle control button clicks
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         Vector2 mousePos = GetMousePosition();
         
         // Sort button
         if (CheckCollisionPointRec(mousePos, sortButton)) {
-            if (isSearching) {
-                sortHistory(filteredHistory, filteredCount);
-            } else {
-                sortHistory(history, historyCount);
+            sortHistory(history, historyCount);
+            if (isSearching && !searchText.empty()) {
+                filteredCount = filterHistory(history, historyCount, filteredHistory, searchText);
             }
         }
         
@@ -308,10 +286,6 @@ void drawHistory() {
     }
 }
 
-/**
- * Draw calculator buttons and handle button interactions
- * @param inputText - Reference to input string to modify
- */
 void drawButtons(string &inputText) {
     Vector2 mousePos = GetMousePosition();
 
@@ -323,11 +297,10 @@ void drawButtons(string &inputText) {
             int x = startX + col * (buttonWidth + gap) - 13;
             int y = startY + row * (buttonHeight + gap) + 30;
 
-            // Draw button background and border
             DrawRectangle(x, y, buttonWidth, buttonHeight, {238, 238, 238, 255});
             DrawRectangleLines(x, y, buttonWidth, buttonHeight, DARKGRAY);
 
-            // Center text 
+
             Vector2 textWidth = MeasureTextEx(labelFont, label.c_str(), 25.0f, 0.0f);
             DrawTextEx(
                 labelFont,
@@ -341,7 +314,6 @@ void drawButtons(string &inputText) {
 
             Rectangle buttonRect = {(float)x, (float)y, (float)buttonWidth, (float)buttonHeight};
             
-            // Handle button clicks
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
                 CheckCollisionPointRec(mousePos, buttonRect)) {
                 

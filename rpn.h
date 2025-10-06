@@ -28,9 +28,7 @@ string evalRPN(const string& rpn) {
     string token;
     
     for (size_t i=0; i<rpn.size();) {
-        if (isSpace(rpn[i])) { ++i; continue; }
-
-       
+        if (isSpace(rpn[i])) { ++i; continue; } 
         if (isDigit(rpn[i]) || (rpn[i] == '-' && i+1 < rpn.size() && isDigit(rpn[i+1]))) {
             token.clear();
             if (rpn[i] == '-') {
@@ -64,10 +62,10 @@ string evalRPN(const string& rpn) {
             if (token=="Pow") {
                 double exp = stod(st.pop());
                 double base = stod(st.pop());
-                st.push(formatNum(applyFunctionDouble(token, base, exp)));
+                st.push(formatNum(applyFunction(token, base, exp)));
             } else {
                 double a = stod(st.pop());
-                st.push(formatNum(applyFunctionDouble(token, a)));
+                st.push(formatNum(applyFunction(token, a)));
             }
         }
         else throw invalid_argument("Unknown operator or function: " + token);

@@ -3,6 +3,7 @@
 #include <string>
 using namespace std;
 
+// ĐỊNH NGHĨA STACK
 struct Stack {
     string values[200];
     int top = -1;
@@ -21,3 +22,4 @@ struct Stack {
     bool empty() const { return top < 0; }
     int size() const { return top + 1; }
 };
+

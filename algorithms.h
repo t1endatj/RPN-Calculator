@@ -2,7 +2,7 @@
 #include <string>
 using namespace std;
 
-// Struct to store a calculation
+// STRUCT LỊCH SỬ
 struct History {
     string expression;
     double result;
@@ -19,27 +19,38 @@ struct History {
 };
 
 
-// Insertion sort
-void insertionSort(History nums[], int n) {
-    for (int i = 1; i < n; i++) {
-        History key = nums[i]; 
-        int j = i - 1;
-        while (j >= 0 && nums[j].result > key.result) {
-            nums[j + 1] = nums[j];
+// QUICK SORT
+void quickSort(History nums[], int l, int r) {
+    if (l >= r) return;
+    double pivot = nums[(l + r) / 2].result;
+    int i = l;
+    int j = r;
+    
+    while (i <= j) {
+        while (nums[i].result < pivot) i++;
+        while (nums[j].result > pivot) j--;
+        if (i <= j) {
+            History temp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = temp;
+            i++;
             j--;
         }
-        nums[j + 1] = key;
     }
+    
+    
+    if (l < j) quickSort(nums, l, j);
+    if (i < r) quickSort(nums, i, r);
 }
 
 void sortHistory(History history[], int count) {
     if (history == nullptr || count <= 0) return;
-    insertionSort(history, count);
+    quickSort(history, 0, count - 1);
 }
 
 
 
-// Boyar moore string search
+// THUẬT TOÁN TÌM KIẾM BOYAR MOORE
 bool boyarMooreSearch(const string& text, const string& pattern) {
     int n = text.size();
     int m = pattern.size();
@@ -75,8 +86,8 @@ bool boyarMooreSearch(const string& text, const string& pattern) {
 }
 
 
-// Filter history by search string
-int filterHistory(const History source[], int sourceCount, History filtered[], const string& searchText) {
+// HÀM LỌC PHÉP TOÁN
+int historyFilterd(const History source[], int sourceCount, History filtered[], const string& searchText) {
         int filteredCount = 0;    
         for (int i = 0; i < sourceCount && filteredCount < 30; i++) { 
             string resultStr = formatNum(source[i].result);

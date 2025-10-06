@@ -264,7 +264,7 @@ void drawHistory() {
         if (CheckCollisionPointRec(mousePos, sortButton)) {
             sortHistory(history, historyCount);
             if (isSearching && !searchText.empty()) {
-                filteredCount = filterHistory(history, historyCount, filteredHistory, searchText);
+                filteredCount = historyFiltered(history, historyCount, filteredHistory, searchText);
             }
         }
         
@@ -279,7 +279,7 @@ void drawHistory() {
         // FILTER
         if (CheckCollisionPointRec(mousePos, filterButton)) {
             if (!searchText.empty()) {
-                filteredCount = filterHistory(history, historyCount, filteredHistory, searchText);
+                filteredCount = historyFiltered(history, historyCount, filteredHistory, searchText);
                 isSearching = true;
             } else {
                 isSearching = false;

@@ -3,6 +3,8 @@
 int main() {
     InitWindow(500, 800, "RPN Calculator");
     SetTargetFPS(60);
+    Image winIcon = LoadImage("./ICON_CALCULATOR.png");
+    SetWindowIcon(winIcon);
     setFont();
  
 

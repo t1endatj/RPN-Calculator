@@ -38,6 +38,7 @@ Font displayFont;
 Font miniFont;
 Font hFont;
 
+
 // Application State
 string inputText = "";
 string result = "";

@@ -111,7 +111,7 @@ void deleteToken(string &inputText) {
 // ======================= GỌI HÀM TÍNH TOÁN ================================
 // ============================================================================
 
-
+// TÍNH TOÁN ĐẦU VÀO
 void Calculator() {
     try {
         string res = evalRPN(inputText);
@@ -122,7 +122,7 @@ void Calculator() {
             double numResult = stod(res);
             addToHistory(inputText, numResult);
         } catch (const exception& e) {
-            result = string("Error: ") + e.what();
+            result = string("Error converting result: ") + e.what();
         }
     } catch (const exception& e) {
         result = e.what();
@@ -198,7 +198,7 @@ void drawScrollableText(Font font, const string &text, Rectangle box, int fontSi
     EndScissorMode();
 }
 
-// HIỆN KẾT QUẢ
+
 void displayResult(string inputText) {
     drawScrollableText(displayFont, inputText, displayRes, 30, BLACK);
 }
@@ -241,7 +241,7 @@ void drawHistory() {
         // HIỆU ỨNG KHI HOVER VÀO PHÉP TOÁN
         Rectangle lineRect = {30, yPos - 5, 420, 20};
         
-        // HÀM CHECKCOLLISIONPOINTREC() DÙNG KIỂM TRA CHUỘT CÓ TRONG KHỐI KHÔNG
+        // HÀM CheckCollisionPointRec() DÙNG KIỂM TRA CHUỘT CÓ TRONG KHỐI KHÔNG
 
         if (CheckCollisionPointRec(mousePos, lineRect)) {
             DrawRectangleRec(lineRect, YELLOW);
@@ -264,7 +264,7 @@ void drawHistory() {
         if (CheckCollisionPointRec(mousePos, sortButton)) {
             sortHistory(history, historyCount);
             if (isSearching && !searchText.empty()) {
-                filteredCount = historyFilterd(history, historyCount, filteredHistory, searchText);
+                filteredCount = filterHistory(history, historyCount, filteredHistory, searchText);
             }
         }
         
@@ -279,7 +279,7 @@ void drawHistory() {
         // FILTER
         if (CheckCollisionPointRec(mousePos, filterButton)) {
             if (!searchText.empty()) {
-                filteredCount = historyFilterd(history, historyCount, filteredHistory, searchText);
+                filteredCount = filterHistory(history, historyCount, filteredHistory, searchText);
                 isSearching = true;
             } else {
                 isSearching = false;

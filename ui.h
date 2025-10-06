@@ -47,7 +47,6 @@ string ans = "";
 
 // QUẢN LÍ LỊCH SỬ
 int historyCount = 0;
-int head = 0;
 int filteredCount = 0;
 bool isSearching = false;
 bool searchMode = false;
@@ -82,11 +81,13 @@ void setFont() {
 
 // HÀM THÊM BIỂU THỨC VÀO LỊCH SỬ
 void addToHistory(const string& expression, double resultValue) {
-    history[head] = History(expression, resultValue);
-    head = (head + 1) % maxHistory;
-    if (historyCount < maxHistory) {
-        historyCount++;
+    // Dịch các phần tử cũ xuống 1 vị trí
+    for (int i = min(historyCount, maxHistory - 1); i > 0; i--) {
+        history[i] = history[i - 1];
     }
+    history[0] = History(expression, resultValue);
+    if (historyCount < maxHistory)
+        historyCount++;
 }
 
 // HÀM XOÁ CÁC TOKEN ĐẶT BIỆT
@@ -122,7 +123,7 @@ void Calculator() {
             double numResult = stod(res);
             addToHistory(inputText, numResult);
         } catch (const exception& e) {
-            result = string("Error converting result: ") + e.what();
+            result = string("Error: ") + e.what();
         }
     } catch (const exception& e) {
         result = e.what();
@@ -228,7 +229,7 @@ void drawHistory() {
     int displayCount = isSearching ? filteredCount : historyCount;
     
     // HIỆN CÁC PHÉP TOÁN ĐÃ NHẬP
-    int maxDisplay = isSearching ? min(displayCount, 15) : min(displayCount, 10); 
+    int maxDisplay = isSearching ? min(displayCount, 20) : min(displayCount, 10); 
     for (int i = 0; i < displayCount && i < maxDisplay; i++) {
         float yPos = 172 + i * 25;
         string displayText = displayArray[i].expression + " = " + formatNum(displayArray[i].result);

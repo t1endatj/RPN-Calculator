@@ -5,17 +5,6 @@ using namespace std;
 
 double myAbs(double v) { return v < 0.0 ? -v : v; }
 
-double mySqrt(double x) {
-    if (x < 0.0) throw invalid_argument("Sqrt of negative number");
-    if (x == 0.0) return 0.0;
-    double r = x < 1.0 ? 1.0 : x;
-    for (int i = 0; i < 200; ++i) {
-        double nr = 0.5 * (r + x / r);
-        if (myAbs(nr - r) <= 1e-15) break;
-        r = nr;
-    }
-    return r;
-}
 
 const double LN2 = 0.693147180559945309417232121458176568;
 
@@ -69,8 +58,11 @@ double myPow(double base, double exponent) {
         if (exponent > 0.0) return 0.0;
         throw invalid_argument("0 cannot be raised to non-positive power");
     }
+    if(base < 0.0 && exponent == 0.5){
+        throw invalid_argument("A negative number can’t be squared");
+    }
     if (base < 0.0 && !isInteger(exponent))
-        throw invalid_argument("Negative base with non-integer exponent not supported");
+        throw invalid_argument("Invalid negative base exponent");
 
     if (isInteger(exponent)) {
         long long e = (long long)exponent;
@@ -91,7 +83,7 @@ double myPow(double base, double exponent) {
 }
 
 double applyFunction(const string& func, double x, double y = 0.0) {
-    if (func == "Sqrt") return mySqrt(x);
+    if (func == "Sqrt") return myPow(x, 0.5);
     if (func == "Pow")  return myPow(x, y);
     if (func == "Inv") {
         if (x == 0.0) throw invalid_argument("Division by zero");

@@ -56,14 +56,11 @@ bool isInteger(double x) {
 double myPow(double base, double exponent) {
     if (base == 0.0) {
         if (exponent > 0.0) return 0.0;
-        throw invalid_argument("0 cannot be raised to non-positive power");
+        throw invalid_argument("0 can't be raised to 0 or negative.");
     }
     if(base < 0.0 && exponent == 0.5){
         throw invalid_argument("A negative number can’t be squared");
     }
-    if (base < 0.0 && !isInteger(exponent))
-        throw invalid_argument("Invalid negative base exponent");
-
     if (isInteger(exponent)) {
         long long e = (long long)exponent;
         bool neg = e < 0;

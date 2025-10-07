@@ -20,6 +20,8 @@ struct History {
 };
 
 
+
+
 // QUICK SORT
 void quickSort(History nums[], int l, int r) {
     if (l >= r) return;

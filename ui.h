@@ -70,11 +70,11 @@ History filteredHistory[maxHistory];
 
 // HÀM GÁN PHÔNG CHỮ
 void setFont() {
-    myFont = LoadFontEx("./Poppins-Medium.otf", 40, 0, 0);
-    labelFont = LoadFontEx("./Poppins-Medium.otf", 25, 0, 0);
-    displayFont = LoadFontEx("./Poppins-Medium.otf", 30, 0, 0);
-    miniFont = LoadFontEx("./Poppins-Medium.otf", 14, 0, 0);
-    hFont = LoadFontEx("./Poppins-Medium.otf", 12, 0, 0);
+    myFont = LoadFontEx("Poppins-Medium.otf", 40, 0, 0);
+    labelFont = LoadFontEx("Poppins-Medium.otf", 25, 0, 0);
+    displayFont = LoadFontEx("Poppins-Medium.otf", 30, 0, 0);
+    miniFont = LoadFontEx("Poppins-Medium.otf", 14, 0, 0);
+    hFont = LoadFontEx("Poppins-Medium.otf", 12, 0, 0);
     SetTextureFilter(myFont.texture, TEXTURE_FILTER_POINT);
 }
 

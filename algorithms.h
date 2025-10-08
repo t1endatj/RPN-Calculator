@@ -53,31 +53,30 @@ void sortHistory(History history[], int count) {
 
 
 
-// THUẬT TOÁN TÌM KIẾM BOYAR MOORE
+// THUẬT TOÁN TÌM KIẾM BOYER MOORE 
 bool boyerMooreSearch(const string& text, const string& pattern) {
     int n = text.size();
     int m = pattern.size();
     if (m == 0) return true;
     if (n < m) return false;
 
-    int L[256];
-    for (int i = 0; i < 256; i++) L[i] = -1;
-    for (int j = 0; j < m; j++) L[(unsigned char)pattern[j]] = j;
+    int badChar[256];
+    for (int i = 0; i < 256; i++) badChar[i] = -1;
+    for (int j = 0; j < m; j++) badChar[(unsigned char)pattern[j]] = j;
 
-    int i = m - 1;
-    int j = m - 1;
-
-    while (i < n) {
-        if (text[i] == pattern[j]) {
-            if (j == 0)
-                return true;
-            i--;
-            j--;
-        } else {
-            int l = L[(unsigned char)text[i]];
-            int shift = max(1, j - l);
-            i += shift;
-            j = m - 1;
+    int shift = 0; 
+    
+    while (shift <= (n - m)) {
+        int j = m - 1;  
+        while (j >= 0 && pattern[j] == text[shift + j]) j--;
+        
+        if (j < 0) {
+            return true;
+        } 
+        else {
+            char mismatchChar = text[shift + j];
+            int badCharShift = j - badChar[(unsigned char)mismatchChar];
+            shift += max(1, badCharShift);
         }
     }
     return false;

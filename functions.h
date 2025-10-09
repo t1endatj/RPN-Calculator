@@ -87,6 +87,6 @@ double applyFunction(const string& func, double x, double y = 0.0) {
         return 1.0 / x;
     }
     if (func == "Neg") return -x;
-    if (func == "Abs") return x < 0.0 ? -x : x;
+    if (func == "Abs") return myAbs(x);
     throw invalid_argument("Unknown function: " + func);
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include "rpn.h"
-#include "algorithms.h"
+#include "history.h"
 #include <iostream>
 #include <string>
 using namespace std;
@@ -16,7 +16,7 @@ const int buttonHeight = 60;
 const int startX = 40;
 const int startY = 400; 
 const int gap = 12;
-const int maxHistory = 30;
+const int maxHistory = 50;
 
 const char* labels[5][5] = {
     {"Pow", "Sqrt", "Inv", "Neg", "Abs"},
@@ -229,7 +229,7 @@ void drawHistory() {
     int displayCount = isSearching ? filteredCount : historyCount;
     
     // HIỆN CÁC PHÉP TOÁN ĐÃ NHẬP
-    int maxDisplay = isSearching ? min(displayCount, 20) : min(displayCount, 10); 
+   int maxDisplay = min(displayCount, 10);
     for (int i = 0; i < displayCount && i < maxDisplay; i++) {
         float yPos = 172 + i * 25;
         string displayText = displayArray[i].expression + " = " + formatNum(displayArray[i].result);

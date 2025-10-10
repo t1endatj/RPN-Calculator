@@ -85,12 +85,10 @@ bool boyerMooreSearch(const string& text, const string& pattern) {
 
 
 // HÀM LỌC PHÉP TOÁN
-int historyFiltered(const History source[], int sourceCount, History filtered[], const string& searchText) {
+int filterHistory(const History source[], int sourceCount, History filtered[], const string& searchText) {
         int filteredCount = 0;    
         for (int i = 0; i < sourceCount && filteredCount < 50; i++) { 
-            string resultStr = formatNum(source[i].result);
-            if (boyerMooreSearch(source[i].expression, searchText) || 
-                boyerMooreSearch(resultStr, searchText)) {
+            if (boyerMooreSearch(source[i].expression, searchText)) {
                 filtered[filteredCount] = source[i];
                 filteredCount++;
             }

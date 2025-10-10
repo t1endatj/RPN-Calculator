@@ -112,7 +112,7 @@ void deleteToken(string &inputText) {
 // ======================= GỌI HÀM TÍNH TOÁN ================================
 // ============================================================================
 
-// TÍNH TOÁN ĐẦU VÀO
+// TÍNH TOÁN CHUỖI ĐẦU VÀO
 void Calculator() {
     try {
         string res = evalRPN(inputText);
@@ -185,13 +185,12 @@ void keyBoardEvent() {
 
 // ẨN PHẦN ĐẦU VÀ HIỆN PHẦN SAU NẾU CHUỖI DÀI HƠN KHỐI NHẬP DỮ LIỆU
 void drawScrollableText(Font font, const string &text, Rectangle box, int fontSize, Color color) {
+    
     Vector2 textSize = MeasureTextEx(font, text.c_str(), fontSize, 2);
     float offset = 0;
-    
     if (textSize.x > box.width - 10) {
         offset = textSize.x - (box.width - 10);
     }
-
     Vector2 pos = {box.x + 5 - offset, box.y + (box.height - fontSize) / 2.0f};
 
     BeginScissorMode((int)box.x, (int)box.y, (int)box.width, (int)box.height);
@@ -201,6 +200,7 @@ void drawScrollableText(Font font, const string &text, Rectangle box, int fontSi
 
 
 void displayResult(string inputText) {
+    
     drawScrollableText(displayFont, inputText, displayRes, 30, BLACK);
 }
 
@@ -209,6 +209,7 @@ void drawHistory() {
     
     DrawRectangleRec(searchBox, WHITE);
     drawScrollableText(miniFont, searchText, searchBox, 14, BLACK);
+    
     
     
     DrawRectangleRec(sortButton, LIGHTGRAY);
@@ -223,7 +224,6 @@ void drawHistory() {
     
     DrawRectangleRec(displayH, LIGHTGRAY);
     
-    // LẤY VỊ TRÍ CHUỘT VÀ GIỚI HẠN PHÉP TOÁN ĐƯỢC HIỆN RA
     Vector2 mousePos = GetMousePosition();
     History* displayArray = isSearching ? filteredHistory : history;
     int displayCount = isSearching ? filteredCount : historyCount;
@@ -247,7 +247,6 @@ void drawHistory() {
         if (CheckCollisionPointRec(mousePos, lineRect)) {
             DrawRectangleRec(lineRect, YELLOW);
         }
-        
         DrawTextEx(hFont, displayText.c_str(), {35, yPos}, 12, 1, BLACK);
         
         // COPY BIỂU THỨC LÊN Ô NHẬP KHI NHẤP VÀO PHÉP TOÁN TRONG LỊCH SỬ
@@ -260,16 +259,16 @@ void drawHistory() {
     // NÚT GỌI CHỨC NĂNG SORT, FILTER, CLEAR.
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         Vector2 mousePos = GetMousePosition();
+
         
-        // SORT
         if (CheckCollisionPointRec(mousePos, sortButton)) {
             sortHistory(history, historyCount);
             if (isSearching && !searchText.empty()) {
-                filteredCount = historyFiltered(history, historyCount, filteredHistory, searchText);
+                filteredCount = filterHistory(history, historyCount, filteredHistory, searchText);
             }
         }
         
-        // CLEAR
+        
         if (CheckCollisionPointRec(mousePos, clearButton)) {
             historyCount = 0;
             filteredCount = 0;
@@ -277,10 +276,10 @@ void drawHistory() {
             isSearching = false;
         }
         
-        // FILTER
+       
         if (CheckCollisionPointRec(mousePos, filterButton)) {
             if (!searchText.empty()) {
-                filteredCount = historyFiltered(history, historyCount, filteredHistory, searchText);
+                filteredCount = filterHistory(history, historyCount, filteredHistory, searchText);
                 isSearching = true;
             } else {
                 isSearching = false;

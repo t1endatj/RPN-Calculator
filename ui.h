@@ -210,8 +210,6 @@ void drawHistory() {
     DrawRectangleRec(searchBox, WHITE);
     drawScrollableText(miniFont, searchText, searchBox, 14, BLACK);
     
-    
-    
     DrawRectangleRec(sortButton, LIGHTGRAY);
     DrawTextEx(miniFont, "Sort", {313, 133}, 14, 1, BLACK);
     
@@ -259,7 +257,6 @@ void drawHistory() {
     // NÚT GỌI CHỨC NĂNG SORT, FILTER, CLEAR.
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         Vector2 mousePos = GetMousePosition();
-
         
         if (CheckCollisionPointRec(mousePos, sortButton)) {
             sortHistory(history, historyCount);

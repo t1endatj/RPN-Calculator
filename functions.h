@@ -16,7 +16,7 @@ double myLn(double v) {
     while (x < 1.0) { x *= 2.0; --n; }
     double t = (x - 1.0) / (x + 1.0);
     double t2 = t * t;
-    double term = t;
+    double term = t;    
     double sum = term;
     for (int k = 3; ; k += 2) {
         term *= t2;

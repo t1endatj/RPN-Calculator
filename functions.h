@@ -37,7 +37,7 @@ double myExp(double x) {
         term *= r / (double)k;
         sum += term;
         if (myAbs(term) < 1e-16) break;
-        if (k > 20000) break;
+        if (k > 20001) break;
     }
     double pow2 = 1.0;
     if (n > 0) {
